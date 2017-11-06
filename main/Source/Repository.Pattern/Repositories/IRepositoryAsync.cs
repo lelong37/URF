@@ -10,5 +10,7 @@ namespace Repository.Pattern.Repositories
         Task<TEntity> FindAsync(CancellationToken cancellationToken, params object[] keyValues);
         Task<bool> DeleteAsync(params object[] keyValues);
         Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues);
+        Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
+        Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken, params object[] parameters);
     }
 }
