@@ -18,6 +18,7 @@ namespace Service.Pattern
         void ApplyChanges(TEntity entity);
         [Obsolete("InsertOrUpdateGraph has been deprecated.  Instead set TrackingState to Added or Modified and call ApplyChanges.")]
         void InsertOrUpdateGraph(TEntity entity);
+        [Obsolete("InsertGraphRange has been deprecated. Instead call Insert to set TrackingState on enttites in a graph.")]
         void InsertGraphRange(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
         void Delete(object id);

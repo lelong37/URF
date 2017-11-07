@@ -115,16 +115,6 @@ namespace Repository.Pattern.Ef6
             return true;
         }
 
-        public virtual async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
-        {
-            return await Context.Database.ExecuteSqlCommandAsync(sql, parameters);
-        }
-
-        public virtual async Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken, params object[] parameters)
-        {
-            return await Context.Database.ExecuteSqlCommandAsync(sql, cancellationToken, parameters);
-        }
-
         internal IQueryable<TEntity> Select(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,

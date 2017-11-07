@@ -73,6 +73,21 @@ namespace Repository.Pattern.Ef6
             return Repositories[type];
         }
 
+        public virtual int ExecuteSqlCommand(string sql, params object[] parameters)
+        {
+            return _context.Database.ExecuteSqlCommand(sql, parameters);
+        }
+
+        public virtual async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return await _context.Database.ExecuteSqlCommandAsync(sql, parameters);
+        }
+
+        public virtual async Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken, params object[] parameters)
+        {
+            return await _context.Database.ExecuteSqlCommandAsync(sql, cancellationToken, parameters);
+        }
+
         public virtual void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified)
         {
             var objectContext = ((IObjectContextAdapter) _context).ObjectContext;
