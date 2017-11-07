@@ -35,6 +35,12 @@ namespace Repository.Pattern.Ef6
             return RepositoryAsync<TEntity>();
         }
 
+        public int? CommandTimeout
+        {
+            get => _context.Database.CommandTimeout;
+            set => _context.Database.CommandTimeout = value;
+        }
+
         public virtual int SaveChanges() => _context.SaveChanges();
 
         public Task<int> SaveChangesAsync()
