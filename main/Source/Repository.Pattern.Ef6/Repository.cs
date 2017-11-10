@@ -143,6 +143,16 @@ namespace Repository.Pattern.Ef6
             return query;
         }
 
+        public virtual async Task<IEnumerable<TEntity>> SelectQueryAsync(string query, params object[] parameters)
+        {
+            return await Set.SqlQuery(query, parameters).ToArrayAsync();
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> SelectQueryAsync(string query, CancellationToken cancellationToken, params object[] parameters)
+        {
+            return await Set.SqlQuery(query, parameters).ToArrayAsync(cancellationToken);
+        }
+
         internal async Task<IEnumerable<TEntity>> SelectAsync(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
