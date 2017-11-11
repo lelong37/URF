@@ -9,6 +9,7 @@ using Repository.Pattern.Ef6;
 using Repository.Pattern.Repositories;
 using Repository.Pattern.UnitOfWork;
 using TrackableEntities;
+using System.Threading.Tasks;
 
 namespace Northwind.Test.IntegrationTests
 {
@@ -84,6 +85,33 @@ namespace Northwind.Test.IntegrationTests
 
                 var insertedProduct = productRepository.Query(x => x.ProductName == "One").Select().FirstOrDefault();
                 Assert.IsTrue(insertedProduct?.ProductName == "One");
+            }
+        }
+
+        [TestMethod]
+        public async Task DeleteProductsAsync()
+        {
+            using (var context = new NorthwindContext())
+            {
+                IUnitOfWorkAsync unitOfWork = new UnitOfWork(context);
+                IRepositoryAsync<Product> productRepository = new Repository<Product>(context, unitOfWork);
+
+                var product = new Product
+                {
+                    ProductName = "One",
+                    Discontinued = false,
+                    TrackingState = TrackingState.Added
+                };
+
+                productRepository.Insert(product);
+                await unitOfWork.SaveChangesAsync();
+
+                await productRepository.DeleteAsync(product.ProductID);
+                await unitOfWork.SaveChangesAsync();
+
+                var deletedProduct = unitOfWork.Repository<Product>().Find(product.ProductID);
+
+                Assert.IsNull(deletedProduct);
             }
         }
     }
