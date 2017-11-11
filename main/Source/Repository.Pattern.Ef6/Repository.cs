@@ -112,6 +112,7 @@ namespace Repository.Pattern.Ef6
             }
 
             entity.TrackingState = TrackingState.Deleted;
+            Context.ApplyChanges(entity);
             return true;
         }
 
