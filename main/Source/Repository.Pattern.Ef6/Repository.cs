@@ -36,10 +36,14 @@ namespace Repository.Pattern.Ef6
             return Set.SqlQuery(query, parameters).AsQueryable();
         }
 
-        public virtual void Insert(TEntity entity)
+        public virtual void Insert(TEntity entity, bool traverseGraph = true)
         {
             entity.TrackingState = TrackingState.Added;
-            Context.ApplyChanges(entity);
+
+            if (traverseGraph)
+                Context.ApplyChanges(entity);
+            else
+                Context.Entry(entity).State = EntityState.Added;
         }
 
         public void ApplyChanges(TEntity entity)
@@ -47,21 +51,25 @@ namespace Repository.Pattern.Ef6
             Context.ApplyChanges(entity);
         }
 
-        public virtual void InsertRange(IEnumerable<TEntity> entities)
+        public virtual void InsertRange(IEnumerable<TEntity> entities, bool traverseGraph = true)
         {
             foreach (var entity in entities)
             {
-                Insert(entity);
+                Insert(entity, traverseGraph);
             }
         }
 
         [Obsolete("InsertGraphRange has been deprecated. Instead call Insert to set TrackingState on enttites in a graph.")]
         public virtual void InsertGraphRange(IEnumerable<TEntity> entities) => InsertRange(entities);
 
-        public virtual void Update(TEntity entity)
+        public virtual void Update(TEntity entity, bool traverseGraph = true)
         {
             entity.TrackingState = TrackingState.Modified;
-            Context.ApplyChanges(entity);
+
+            if (traverseGraph)
+                Context.ApplyChanges(entity);
+            else
+                Context.Entry(entity).State = EntityState.Modified;
         }
 
         public void Delete(params object[] keyValues)
@@ -139,7 +147,7 @@ namespace Repository.Pattern.Ef6
             }
             if (page != null && pageSize != null)
             {
-                query = query.Skip((page.Value - 1)*pageSize.Value).Take(pageSize.Value);
+                query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
             }
             return query;
         }

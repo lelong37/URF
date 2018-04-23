@@ -12,13 +12,13 @@ namespace Northwind.Test.UnitTests.Fake
         {
         }
 
-        public override void Insert(TEntity entity)
+        public override void Insert(TEntity entity, bool traverseGraph = true)
         {
             entity.TrackingState = TrackingState.Added;
             Set.Attach(entity);
         }
 
-        public override void Update(TEntity entity)
+        public override void Update(TEntity entity, bool traverseGraph = true)
         {
             entity.TrackingState = TrackingState.Modified;
             Set.Attach(entity);
