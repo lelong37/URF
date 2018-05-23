@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Repository.Pattern.Repositories;
@@ -13,5 +14,6 @@ namespace Repository.Pattern.UnitOfWork
         IRepositoryAsync<TEntity> RepositoryAsync<TEntity>() where TEntity : class, ITrackable;
         Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
         Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken, params object[] parameters);
+        Task ExecuteDataReaderAsync(string sql, object parameters, Action<DbDataReader> action);
     }
 }
