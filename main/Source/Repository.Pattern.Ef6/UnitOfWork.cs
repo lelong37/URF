@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -113,6 +114,53 @@ namespace Repository.Pattern.Ef6
         public virtual void Rollback()
         {
             Transaction.Rollback();
+        }
+
+        public virtual async Task ExecuteDataReaderAsync(string sql, object parameters, Action<DbDataReader> action)
+        {
+            if (_context.Database.Connection.State != ConnectionState.Open)
+                await _context.Database.Connection.OpenAsync();
+            var command = _context.Database.Connection.CreateCommand();
+            command.CommandType = CommandType.Text;
+            command.CommandText = sql;
+            SetParameters(command, parameters);
+            using (var dr = await command.ExecuteReaderAsync())
+            {
+                while (await dr.ReadAsync())
+                    action.Invoke(dr);
+            }
+
+        }
+        public  void SetParameters(DbCommand cmd, object parameters)
+        {
+            cmd.Parameters.Clear();
+            if (parameters == null)
+                return;
+            if (parameters is IList)
+            {
+                var listed = (IList)parameters;
+                for (var i = 0; i < listed.Count; i++)
+                {
+                    AddParameter(cmd, string.Format("@{0}", i), listed[i]);
+                }
+            }
+            else
+            {
+                var t = parameters.GetType();
+                var parameterInfos = t.GetProperties();
+                foreach (var pi in parameterInfos)
+                {
+                    AddParameter(cmd, pi.Name, pi.GetValue(parameters, null));
+                }
+            }
+        }
+
+        private  void AddParameter(DbCommand cmd, string name, object value)
+        {
+            var p = cmd.CreateParameter();
+            p.ParameterName = name;
+            p.Value = value ?? DBNull.Value;
+            cmd.Parameters.Add(p);
         }
     }
 }
